@@ -1,14 +1,14 @@
 services:
   db:
     image: mysql:8.0.2
-    container_name: kunballi-db
+    container_name: kunballi-tarzan-db
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
       - db-data:/var/lib/mysql
     networks:
-      - kunballi-net
+      - kunballi-tarzan-net
     healthcheck:
       test: ["CMD-SHELL", "mysql -uroot -p\"$${MYSQL_ROOT_PASSWORD}\" -e 'SELECT 1' >/dev/null 2>&1"]
       interval: 10s
@@ -18,13 +18,13 @@ services:
 
   redis:
     image: redis:alpine
-    container_name: kunballi-redis
+    container_name: kunballi-tarzan-redis
     restart: unless-stopped
     command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
     volumes:
       - redis-data:/data
     networks:
-      - kunballi-net
+      - kunballi-tarzan-net
     healthcheck:
       test: ["CMD-SHELL", "redis-cli -a \"$${REDIS_PASSWORD}\" ping | grep -q PONG"]
       interval: 10s
@@ -37,8 +37,8 @@ services:
   weather:
     build:
       context: ./weather
-    image: kunballi-weather:local
-    container_name: kunballi-weather
+    image: kunballi-tarzan-weather:local
+    container_name: kunballi-tarzan-weather
     restart: unless-stopped
     environment:
       APIKEY: ${APIKEY}
@@ -48,7 +48,7 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - kunballi-net
+      - kunballi-tarzan-net
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/', timeout=3)\""]
       interval: 30s
@@ -59,8 +59,8 @@ services:
   auth:
     build:
       context: ./auth
-    image: kunballi-auth:local
-    container_name: kunballi-auth
+    image: kunballi-tarzan-auth:local
+    container_name: kunballi-tarzan-auth
     restart: unless-stopped
     environment:
       DB_HOST: db
@@ -69,7 +69,7 @@ services:
       db:
         condition: service_healthy
     networks:
-      - kunballi-net
+      - kunballi-tarzan-net
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/ >/dev/null || exit 1"]
       interval: 30s
@@ -80,8 +80,8 @@ services:
   ui:
     build:
       context: ./UI
-    image: kunballi-ui:local
-    container_name: kunballi-ui
+    image: kunballi-tarzan-ui:local
+    container_name: kunballi-tarzan-ui
     restart: unless-stopped
     environment:
       AUTH_HOST: auth
@@ -100,7 +100,7 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - kunballi-net
+      - kunballi-tarzan-net
     healthcheck:
       test: ["CMD-SHELL", "node -e \"require('http').get('http://127.0.0.1:3000/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))\""]
       interval: 30s
@@ -109,11 +109,11 @@ services:
       start_period: 20s
 
 networks:
-  kunballi-net:
-    name: kunballi-net
+  kunballi-tarzan-net:
+    name: kunballi-tarzan-net
 
 volumes:
   db-data:
-    name: kunballi-db-data
+    name: kunballi-tarzan-db-data
   redis-data:
-    name: kunballi-redis-data
+    name: kunballi-tarzan-redis-data
