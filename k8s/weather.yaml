@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather
+  namespace: weather-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weather
+  template:
+    metadata:
+      labels:
+        app: weather
+    spec:
+      containers:
+        - name: weather
+          image: kunballi/weather-service:v1
+          ports:
+            - containerPort: 5000
+          env:
+            - name: APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: APIKEY
+            - name: REDIS_HOST
+              value: redis
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: REDIS_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weather
+  namespace: weather-app
+spec:
+  selector:
+    app: weather
+  ports:
+    - port: 5000
+      targetPort: 5000
