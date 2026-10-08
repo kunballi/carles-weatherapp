@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: weather
-          image: kunballi/weather-service:bfa36edf73d21f22d9701d4382675eac1e7d87a5
+          image: kunballi/weather-service:abc0d513c8a9b33e55eef86205dce49ef182c5cb
           ports:
             - containerPort: 5000
           env:
