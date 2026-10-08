@@ -23,14 +23,14 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: app-secrets
-                  key: APIKEY
+                  key: _APIKEY
             - name: REDIS_HOST
               value: redis
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: app-secrets
-                  key: REDIS_PASSWORD
+                  key: _REDIS_PASSWORD
           readinessProbe:
             httpGet:
               path: /

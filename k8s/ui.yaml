@@ -33,7 +33,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: app-secrets
-                  key: REDIS_PASSWORD
+                  key: _REDIS_PASSWORD
           readinessProbe:
             httpGet:
               path: /health
