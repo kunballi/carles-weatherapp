@@ -22,7 +22,7 @@ spec:
             - until nc -z db 3306; do echo "waiting for mysql"; sleep 5; done
       containers:
         - name: auth
-          image: kunballi/weather-auth:abc0d513c8a9b33e55eef86205dce49ef182c5cb
+          image: kunballi/weather-auth:8fd4769642ac2cfe5be40b8ed08bff7807b95b43
           ports:
             - containerPort: 8080
           env:

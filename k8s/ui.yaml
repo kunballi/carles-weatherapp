@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: ui
-          image: kunballi/weather-ui:abc0d513c8a9b33e55eef86205dce49ef182c5cb
+          image: kunballi/weather-ui:8fd4769642ac2cfe5be40b8ed08bff7807b95b43
           ports:
             - containerPort: 3000
           env:
