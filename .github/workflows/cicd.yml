@@ -15,6 +15,7 @@ jobs:
   compose-ci:
     name: Build and test Docker Compose stack
     runs-on: [self-hosted, Linux, X64, practice]
+    timeout-minutes: 45
 
     steps:
       - name: Checkout repository
@@ -40,6 +41,14 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Preflight runner and clean old Compose stack
+        run: |
+          docker version
+          docker compose version
+          df -h
+          docker system df
+          docker compose down -v --remove-orphans || true
 
       - name: Validate Docker Compose file
         run: docker compose config --quiet
@@ -137,6 +146,7 @@ jobs:
     name: Deploy with Docker Compose
     runs-on: [self-hosted, Linux, X64, practice]
     needs: compose-ci
+    timeout-minutes: 45
 
     steps:
       - name: Checkout repository
@@ -162,6 +172,14 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Preflight runner and clean old Compose stack
+        run: |
+          docker version
+          docker compose version
+          df -h
+          docker system df
+          docker compose down -v --remove-orphans || true
 
       - name: Deploy Docker Compose stack
         run: docker compose up -d --build
